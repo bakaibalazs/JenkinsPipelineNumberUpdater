@@ -1,66 +1,65 @@
 package hu.bakaibalazs.jenkins.PipelineNumberUpdater;
-import hudson.Launcher;
-import hudson.Extension;
-import hudson.util.FormValidation;
-import hudson.model.AbstractBuild;
-import hudson.model.BuildListener;
-import hudson.model.AbstractProject;
-import hudson.tasks.Builder;
-import hudson.tasks.BuildStepDescriptor;
-import net.sf.json.JSONObject;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.QueryParameter;
 
-import javax.servlet.ServletException;
+import hudson.Extension;
+import hudson.Launcher;
+import hudson.model.BuildListener;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.Builder;
+
+import java.io.File;
 import java.io.IOException;
 
+import org.kohsuke.stapler.DataBoundConstructor;
 
 public class PipelineNumberBuilder extends Builder {
 
-    private final String name;
+	@DataBoundConstructor
+	public PipelineNumberBuilder() {
+	}
 
-    // Fields in config.jelly must match the parameter names in the "DataBoundConstructor"
-    @DataBoundConstructor
-    public PipelineNumberBuilder(String name) {
-        this.name = name;
-    }
+	@Override
+	public boolean perform(AbstractBuild build, Launcher launcher,
+			BuildListener listener) throws IOException {
+		listener.getLogger().println("---perform---");
 
-    /**
-     * We'll use this from the <tt>config.jelly</tt>.
-     */
-    public String getName() {
-        return name;
-    }
+		File file = new File("pipeline-version.properties");
+		if(!file.exists()){
+			listener.getLogger().println("pipeline-version.properties does not exists on this path: "+ file.getAbsolutePath());
+			listener.getLogger().println("pipeline-version.properties does not exists on this path: "+ file.getCanonicalPath());
+			listener.getLogger().println("pipeline-version.properties does not exists on this path: "+ file.getPath());
+			
+			file.setWritable(true,true);			
+			file.createNewFile();
+			
+		}else{
+			listener.getLogger().println("pipeline-version.properties exists");
+		}
+			
 
-    @Override
-    public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) {
-    	listener.getLogger().println("---perform---");
-        return true;
-    }
+		return true;
+	}
 
-    @Override
-    public DescriptorImpl getDescriptor() {
-        return (DescriptorImpl)super.getDescriptor();
-    }
+	@Override
+	public DescriptorImpl getDescriptor() {
+		return (DescriptorImpl) super.getDescriptor();
+	}
 
-    
-    @Extension 
-    public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
-        
+	@Extension
+	public static final class DescriptorImpl extends
+			BuildStepDescriptor<Builder> {
 
-        public boolean isApplicable(Class<? extends AbstractProject> aClass) {
-            // Indicates that this builder can be used with all kinds of project types 
-            return true;
-        }
+		public boolean isApplicable(Class<? extends AbstractProject> aClass) {
+			return true; // Indicates that this builder can be used with all
+							// kinds of project types
+		}
 
-        /**
-         * This human readable name is used in the configuration screen.
-         */
-        public String getDisplayName() {
-            return "Pipeline Number Updater";
-        }
-      
-    }
+		public String getDisplayName() {
+			return "Pipeline Number Updater"; // This human readable name is
+												// used in the configuration
+												// screen.
+		}
+
+	}
 }
-
