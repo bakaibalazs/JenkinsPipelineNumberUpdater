@@ -52,19 +52,18 @@ public class PipelineNumberBuilder extends Builder {
 		listener.getLogger().println("latestGitTag: " + latestGitTag);
 		listener.getLogger().println("currentGitTag: " + currentGitTag);
 
-		if (currentPipelineVersion.isEmpty()) {
+		if (currentPipelineVersion==null) {
 			writeToPropertyFile(propertyFilePath, "PIPELINE_NUMBER", "1");
 		} else {
 			writeToPropertyFile(propertyFilePath, "PIPELINE_NUMBER",
 					String.valueOf(Integer.valueOf(currentPipelineVersion) + 1));
 		}
 
-		if (latestGitTag.isEmpty() || !latestGitTag.equals(currentGitTag)) {
-			writeToPropertyFile(propertyFilePath, "LATEST_GIT_TAG",
-					currentGitTag);
+		if (latestGitTag==null || !latestGitTag.equals(currentGitTag)) {
+			writeToPropertyFile(propertyFilePath, "LATEST_GIT_TAG",currentGitTag);
 		}
 
-		if (!latestGitTag.equals(currentGitTag)) {
+		if (latestGitTag!=null && currentGitTag!=null && !latestGitTag.equals(currentGitTag)) {
 			writeToPropertyFile(propertyFilePath, "PIPELINE_NUMBER", "1");
 		}
 
@@ -82,7 +81,7 @@ public class PipelineNumberBuilder extends Builder {
 			ps = ps.pwd(build.getWorkspace()).envs(build.getEnvironment(listener));
 			Proc proc = launcher.launch(ps);
 			proc.join();			
-			return new String(((ByteArrayOutputStream)out).toByteArray(), "UTF-8");			
+			return new String(((ByteArrayOutputStream)out).toByteArray(), "UTF-8").replace("\n", "").replace("\r", "");			
 		}catch(Exception e){
 			stackTraceToString(e);
 			return "";
@@ -105,7 +104,7 @@ public class PipelineNumberBuilder extends Builder {
 			return prop.getProperty(name);
 		} catch (IOException ex) {
 			ex.printStackTrace();
-			return "";
+			return null;
 		} finally {
 			if (input != null) {
 				try {
