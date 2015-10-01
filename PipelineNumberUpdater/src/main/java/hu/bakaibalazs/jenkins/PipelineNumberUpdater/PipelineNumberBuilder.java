@@ -30,6 +30,8 @@ public class PipelineNumberBuilder extends Builder {
 	
 	private static final Properties prop = new Properties();
 	private static PrintStream logger=null;
+	
+	
 
 	@DataBoundConstructor
 	public PipelineNumberBuilder() {
