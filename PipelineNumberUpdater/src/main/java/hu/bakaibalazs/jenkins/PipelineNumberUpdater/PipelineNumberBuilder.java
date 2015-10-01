@@ -26,7 +26,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 public class PipelineNumberBuilder extends Builder {
 
 	private static final String LATEST_GIT_TAG_COMMAND="git describe --abbrev=0";
-	private static final String PROPERTY_FILE_NAME = "pipeline-version.properties";
+	private static final String PROPERTY_FILE_NAME = "pipeline.properties";
 	
 	private static final Properties prop = new Properties();
 	private static PrintStream logger=null;
@@ -37,7 +37,7 @@ public class PipelineNumberBuilder extends Builder {
 
 	
 	/**
-	 * Save the latest git tag and the pipeline version into the property file
+	 * Save the latest git tag and the pipeline version into the property file.
 	 * When a new git tag comes this plugin initialize the pipeline version to 1
 	 * 
 	 */
@@ -52,7 +52,7 @@ public class PipelineNumberBuilder extends Builder {
 		String currentGitTag = executeCommand(build, launcher, listener,LATEST_GIT_TAG_COMMAND);
 
 		if(currentGitTag==null){
-			logger.println("YOU HAVE TO CREATE A GIT TAG BEFORE YOU USE THIS PLUGIN");
+			logger.println("---YOU HAVE TO CREATE A GIT TAG BEFORE YOU USE THE PIPELINE NUMBER UPDATER JENKINS PLUGIN---");
 			return false;
 		}
 		
@@ -79,7 +79,8 @@ public class PipelineNumberBuilder extends Builder {
 	}
 
 	private String executeCommand(AbstractBuild build, Launcher launcher,BuildListener listener, String command) {
-
+		assert logger!=null;
+		
 		OutputStream out = new ByteArrayOutputStream();
 		ArgumentListBuilder cmd = new ArgumentListBuilder();		
 		ProcStarter ps = launcher.new ProcStarter();
@@ -97,6 +98,8 @@ public class PipelineNumberBuilder extends Builder {
 	}
 
 	private String readFromPropertyFile(String propertyFilePath, String name) {
+		assert logger!=null;
+		
 		InputStream input = null;
 		try {
 			prop.load(new FileInputStream(propertyFilePath));
@@ -116,6 +119,8 @@ public class PipelineNumberBuilder extends Builder {
 	}
 
 	private void writeIntoPropertyFile(String propertyFilePath, String name,String value) {
+		assert logger!=null;
+		
 		OutputStream output = null;
 		try {
 			output = new FileOutputStream(propertyFilePath);
@@ -136,6 +141,8 @@ public class PipelineNumberBuilder extends Builder {
 	}
 	
 	private String stackTraceToString(Throwable e) {
+		assert e!=null;
+		
 		StringBuilder sb = new StringBuilder();
 		for (StackTraceElement element : e.getStackTrace()) {
 			sb.append(element.toString());
