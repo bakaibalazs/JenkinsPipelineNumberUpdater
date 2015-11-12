@@ -1,4 +1,4 @@
-package hu.bakaibalazs.jenkins.PipelineNumberUpdater;
+package hu.bakaibalazs.jenkins.PipelineVersionUpdater;
 
 import hudson.Extension;
 import hudson.Launcher;
@@ -19,13 +19,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.Calendar;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-public class PipelineNumberBuildWrapper extends BuildWrapper {
+public class PipelineVersionBuildWrapper extends BuildWrapper {
 	
 	private static final String LATEST_GIT_TAG_COMMAND="git describe --abbrev=0";
 	private static final String PROPERTY_FILE_NAME = "pipeline.properties";
@@ -36,7 +34,7 @@ public class PipelineNumberBuildWrapper extends BuildWrapper {
 	
 
 	@DataBoundConstructor
-	public PipelineNumberBuildWrapper() {
+	public PipelineVersionBuildWrapper() {
 	}
 
 	/**
@@ -54,24 +52,24 @@ public class PipelineNumberBuildWrapper extends BuildWrapper {
 		
 		createPropertyFileIfNotExists(propertyFilePath);
 		
-		String savedPipelineVersion = readFromPropertyFile(propertyFilePath,PropertyName.PIPELINE_NUMBER.name());
+		String savedPipelineBuildVersion = readFromPropertyFile(propertyFilePath,PropertyName.PIPELINE_BUILD_VERSION.name());
 		String savedGitTag = readFromPropertyFile(propertyFilePath,PropertyName.LATEST_GIT_TAG.name());
 		String currentGitTag = executeCommand(build, launcher, listener,LATEST_GIT_TAG_COMMAND);
 
 		if(currentGitTag==null){
-			logger.println("---YOU HAVE TO CREATE A GIT TAG BEFORE YOU USE THE PIPELINE NUMBER UPDATER JENKINS PLUGIN---");
+			logger.println("---YOU HAVE TO CREATE A GIT TAG BEFORE YOU USE THE PIPELINE VERSION UPDATER JENKINS PLUGIN---");
 			return null;
 		}
 		
 		
-		logger.println("savedPipelineVersion: " + savedPipelineVersion);
+		logger.println("savedPipelineBuildVersion: " + savedPipelineBuildVersion);
 		logger.println("savedGitTag: " + savedGitTag);
 		logger.println("currentGitTag: " + currentGitTag);
 
-		if (savedPipelineVersion == null) {
-			writeIntoPropertyFile(propertyFilePath, PropertyName.PIPELINE_NUMBER.name(), "1");
+		if (savedPipelineBuildVersion == null) {
+			writeIntoPropertyFile(propertyFilePath, PropertyName.PIPELINE_BUILD_VERSION.name(), "1");
 		} else {
-			writeIntoPropertyFile(propertyFilePath, PropertyName.PIPELINE_NUMBER.name(),String.valueOf(Integer.valueOf(savedPipelineVersion) + 1));
+			writeIntoPropertyFile(propertyFilePath, PropertyName.PIPELINE_BUILD_VERSION.name(),String.valueOf(Integer.valueOf(savedPipelineBuildVersion) + 1));
 		}
 
 		if (savedGitTag == null || !savedGitTag.equals(currentGitTag)) {
@@ -79,7 +77,7 @@ public class PipelineNumberBuildWrapper extends BuildWrapper {
 		}
 
 		if (savedGitTag != null && !savedGitTag.equals(currentGitTag)) {
-			writeIntoPropertyFile(propertyFilePath, PropertyName.PIPELINE_NUMBER.name(), "1");
+			writeIntoPropertyFile(propertyFilePath, PropertyName.PIPELINE_BUILD_VERSION.name(), "1");
 		}
 
 		return new Environment() {
@@ -184,7 +182,7 @@ public class PipelineNumberBuildWrapper extends BuildWrapper {
 
 		@Override
 		public String getDisplayName() {
-			return "Pipeline Number Updater";
+			return "Pipeline Version Updater";
 		}
 	}
 
