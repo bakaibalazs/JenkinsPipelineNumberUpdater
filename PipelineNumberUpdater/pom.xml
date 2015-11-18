@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>hu.bakaibalazs.jenkins</groupId>
 	<artifactId>PipelineVersionUpdater</artifactId>
-	<version>1.1</version>
+	<version>1.2</version>
 	<packaging>hpi</packaging>
 
 	<name>Pipeline Version Updater Plugin</name>

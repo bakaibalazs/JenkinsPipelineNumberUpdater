@@ -27,14 +27,15 @@ public class PipelineVersionBuildWrapper extends BuildWrapper {
 	
 	private static final String LATEST_GIT_TAG_COMMAND="git describe --abbrev=0";
 	private static final String PROPERTY_FILE_NAME = "pipeline.properties";
-	
-	private static final Properties prop = new Properties();
+		
 	private static PrintStream logger=null;
 	
+	private Properties prop = new Properties();
 	
 
 	@DataBoundConstructor
 	public PipelineVersionBuildWrapper() {
+		
 	}
 
 	/**
@@ -43,8 +44,7 @@ public class PipelineVersionBuildWrapper extends BuildWrapper {
 	 * 
 	 */
 	@Override
-	public Environment setUp(AbstractBuild build, Launcher launcher,BuildListener listener) throws IOException, InterruptedException {
-		
+	public Environment setUp(AbstractBuild build, Launcher launcher,BuildListener listener) throws IOException, InterruptedException {		
 		logger=listener.getLogger();
 		logger.println("perform method invoked");		
 					
